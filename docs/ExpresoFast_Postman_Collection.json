@@ -1,0 +1,84 @@
+{
+  "info": {
+    "name": "ExpresoFast Lab 6",
+    "description": "JWT, RBAC, envios y bitacora de auditoria.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "envioId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Login admin",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Password123!\"\n}"
+        },
+        "url": "{{baseUrl}}/api/auth/login"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const data = pm.response.json();",
+              "if (data.token) pm.collectionVariables.set('token', data.token);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listar envios",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/envios/optimizados"
+      }
+    },
+    {
+      "name": "Registrar envio",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigoRastreo\": \"EXP-1234\",\n  \"direccionDestino\": \"Cartago, Paraiso\",\n  \"pesoKg\": 8.5,\n  \"costo\": 4500,\n  \"vehiculoId\": 1,\n  \"conductorId\": 1\n}"
+        },
+        "url": "{{baseUrl}}/api/envios"
+      }
+    },
+    {
+      "name": "Cambiar estado",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nuevoEstado\": \"EN_TRANSITO\",\n  \"observaciones\": \"Paquete recibido en bodega\"\n}"
+        },
+        "url": "{{baseUrl}}/api/envios/{{envioId}}/estado"
+      }
+    },
+    {
+      "name": "Consultar bitacora",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/envios/{{envioId}}/bitacora"
+      }
+    }
+  ]
+}

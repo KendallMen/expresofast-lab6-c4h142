@@ -1,0 +1,9 @@
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=ExpresoFast_C4H142_II2026;encrypt=true;trustServerCertificate=true
+spring.datasource.username=sa
+spring.datasource.password=YOUR_SQL_SERVER_PASSWORD
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect
+app.jwt.secret=REPLACE_WITH_A_RANDOM_SECRET_AT_LEAST_256_BITS
+app.jwt.expiration-ms=3600000
