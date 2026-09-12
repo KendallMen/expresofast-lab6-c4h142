@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>ExpresoFast — Tablero de Monitoreo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>ExpresoFast</h1>
+    <nav>
+      <span id="usuarioActivo"></span>
+      <span id="contadorEnvios">0 envíos</span>
+      <button id="btnLogout">Cerrar sesión</button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <aside class="panel-filtros">
+      <h2>Filtrar por estado</h2>
+      <ul id="filtros">
+        <li><button data-filtro="TODOS" class="activo">TODOS</button></li>
+        <li><button data-filtro="PENDIENTE">PENDIENTE</button></li>
+        <li><button data-filtro="EN_TRANSITO">EN_TRANSITO</button></li>
+        <li><button data-filtro="ENTREGADO">ENTREGADO</button></li>
+      </ul>
+
+      <section class="form-registro">
+        <h2>Registrar envío</h2>
+        <form id="formEnvio">
+          <label>Código de rastreo (formato EXP-1234)
+            <input type="text" id="codigoRastreo" required>
+          </label>
+          <label>Dirección destino
+            <input type="text" id="direccionDestino" required>
+          </label>
+          <label>Peso (kg)
+            <input type="number" step="0.01" id="pesoKg" required>
+          </label>
+          <label>Costo
+            <input type="number" step="0.01" id="costo" required>
+          </label>
+          <label>ID Vehículo
+            <input type="number" id="vehiculoId" required>
+          </label>
+          <label>ID Conductor
+            <input type="number" id="conductorId" required>
+          </label>
+          <button type="submit">Registrar envío</button>
+          <p id="errorFormEnvio" class="error-msg"></p>
+        </form>
+      </section>
+
+      <section id="tabFlota" class="tab-flota">
+        <h2>Gestión de flota</h2>
+        <p>Sección visible solo para ROLE_ADMIN.</p>
+      </section>
+    </aside>
+
+    <section class="tablero" id="tablero" aria-live="polite">
+      <!-- Las tarjetas de envío se insertan aquí dinámicamente -->
+    </section>
+  </main>
+
+  <!-- Modal de bitácora de auditoría -->
+  <div id="modalBitacora" class="modal-overlay">
+    <div class="modal-box">
+      <header>
+        <h2>Bitácora del envío</h2>
+        <button id="cerrarModal">&times;</button>
+      </header>
+      <div class="filtro-fechas">
+        <label>Desde <input type="date" id="fechaDesde"></label>
+        <label>Hasta <input type="date" id="fechaHasta"></label>
+      </div>
+      <div id="bitacoraContenido"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+:root {
+  --color-primario: #1e293b;
+  --color-acento: #2563eb;
+  --color-fondo: #f8fafc;
+  --color-entregado: #16a34a;
+  --color-transito: #2563eb;
+  --color-pendiente: #d97706;
+  --color-cancelado: #dc2626;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--color-fondo);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-primario);
+  color: white;
+  padding: 1rem 1.5rem;
+}
+
+.layout {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.panel-filtros {
+  flex: 0 0 260px;
+}
+
+.panel-filtros ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0;
+}
+
+.panel-filtros button {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--color-acento);
+  background: white;
+  color: var(--color-acento);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.panel-filtros button.activo {
+  background: var(--color-acento);
+  color: white;
+}
+
+.form-registro {
+  margin-top: 2rem;
+}
+
+.form-registro form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.form-registro input {
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.tablero {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  align-content: start;
+}
+
+.tarjeta-envio {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.pill-status {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.pill-status.ENTREGADO   { background: var(--color-entregado); }
+.pill-status.EN_TRANSITO { background: var(--color-transito); }
+.pill-status.PENDIENTE   { background: var(--color-pendiente); }
+.pill-status.CANCELADO   { background: var(--color-cancelado); }
+
+.tarjeta-envio .acciones {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tarjeta-envio button {
+  flex: 1;
+  padding: 0.4rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: var(--color-primario);
+  color: white;
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: min(500px, 90%);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-box header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fila-bitacora {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
