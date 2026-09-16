@@ -66,16 +66,4 @@ Con el backend encendido, sirva la carpeta `frontend` desde un servidor local. P
 
 Importe la coleccion `docs/ExpresoFast_Postman_Collection.json` en Postman para probar el flujo de login y los endpoints protegidos.
 
-## Control de versiones
-
-Use commits semanticos, por ejemplo:
-
-```text
-feat: implement JWT authentication
-feat: add shipment audit log
-fix: allow CORS preflight requests
-feat: add authenticated frontend
-docs: document database setup
-```
-
-El repositorio de entrega debe llamarse `expresofast-lab6-c4h142` y su URL debe entregarse en Mediacion Virtual.
+.
