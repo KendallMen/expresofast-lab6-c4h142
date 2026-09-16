@@ -62,8 +62,4 @@ Con el backend encendido, sirva la carpeta `frontend` desde un servidor local. P
 - `POST /api/envios` - admin u operador.
 - `PATCH /api/envios/{id}/estado` - admin o conductor.
 - `GET /api/envios/{id}/bitacora` - admin u operador.
-- `/api/vehiculos/**` - admin.
-
-Importe la coleccion `docs/ExpresoFast_Postman_Collection.json` en Postman para probar el flujo de login y los endpoints protegidos.
-
-.
+- `/api/vehiculos/**` - admin
