@@ -22,6 +22,7 @@ import cr.ac.ucr.paraiso.ie.c4h142.expresofast.dto.BitacoraResponseDTO;
 import cr.ac.ucr.paraiso.ie.c4h142.expresofast.dto.CambioEstadoDTO;
 import cr.ac.ucr.paraiso.ie.c4h142.expresofast.dto.EnvioRequestDTO;
 import cr.ac.ucr.paraiso.ie.c4h142.expresofast.dto.EnvioResponseDTO;
+import cr.ac.ucr.paraiso.ie.c4h142.expresofast.exception.CapacidadExcedidaException;
 import cr.ac.ucr.paraiso.ie.c4h142.expresofast.exception.InvalidStateTransitionException;
 import cr.ac.ucr.paraiso.ie.c4h142.expresofast.exception.ResourceNotFoundException;
 
@@ -33,12 +34,15 @@ public class EnvioService {
     private final ConductorRepository conductorRepository;
     private final UsuarioRepository usuarioRepository;
     private final BitacoraEnvioRepository bitacoraEnvioRepository;
+    private static final double TARIFA_BASE = 1000.0;
+    private static final double COSTO_POR_KG = 200.0;
+    private static final double COSTO_POR_KM = 50.0;
 
     public EnvioService(EnvioRepository envioRepository,
-                         VehiculoRepository vehiculoRepository,
-                         ConductorRepository conductorRepository,
-                         UsuarioRepository usuarioRepository,
-                         BitacoraEnvioRepository bitacoraEnvioRepository) {
+            VehiculoRepository vehiculoRepository,
+            ConductorRepository conductorRepository,
+            UsuarioRepository usuarioRepository,
+            BitacoraEnvioRepository bitacoraEnvioRepository) {
         this.envioRepository = envioRepository;
         this.vehiculoRepository = vehiculoRepository;
         this.conductorRepository = conductorRepository;
@@ -58,11 +62,10 @@ public class EnvioService {
         Conductor conductor = conductorRepository.findById(dto.getConductorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Conductor no encontrado"));
 
-        // Regla de negocio: el peso del envío no puede superar la capacidad del vehículo
         if (dto.getPesoKg().compareTo(vehiculo.getCapacidadKg()) > 0) {
-            throw new IllegalArgumentException(
-                "El peso del envío (" + dto.getPesoKg() + " kg) supera la capacidad del vehículo ("
-                + vehiculo.getCapacidadKg() + " kg)");
+            throw new CapacidadExcedidaException(
+                    "El peso del envío (" + dto.getPesoKg() + " kg) supera la capacidad del vehículo ("
+                    + vehiculo.getCapacidadKg() + " kg)");
         }
 
         Envio envio = new Envio();
@@ -88,9 +91,8 @@ public class EnvioService {
 
         validarTransicion(estadoAnterior, estadoNuevo, envio.getCodigoRastreo());
 
-        envio.setEstadoEnvio(estadoNuevo); // Dirty Checking: Hibernate hace el UPDATE al hacer commit
+        envio.setEstadoEnvio(estadoNuevo);
 
-        // Usuario autenticado que realiza el cambio (Pista 2 del enunciado)
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         Usuario usuario = usuarioRepository.findByUsername(username)
@@ -114,29 +116,43 @@ public class EnvioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Envío no encontrado"));
     }
 
-    // Reto autónomo: bloquear transiciones de estado inválidas
     private void validarTransicion(String estadoActual, String estadoNuevo, String codigo) {
         boolean esEstadoFinal = "ENTREGADO".equals(estadoActual) || "CANCELADO".equals(estadoActual);
         boolean intentaVolverAtras = "PENDIENTE".equals(estadoNuevo) || "EN_TRANSITO".equals(estadoNuevo);
 
         if (esEstadoFinal && intentaVolverAtras) {
             throw new InvalidStateTransitionException(
-                "Transición de estado no permitida para el envío " + codigo);
+                    "Transición de estado no permitida para el envío " + codigo);
         }
     }
 
     @Transactional(readOnly = true)
     public List<BitacoraResponseDTO> obtenerBitacora(Integer envioId) {
-        // Verifica que el envío exista antes de consultar su historial
         if (!envioRepository.existsById(envioId)) {
             throw new ResourceNotFoundException("Envío no encontrado");
         }
         return bitacoraEnvioRepository.findByEnvioId(envioId);
     }
 
-    // Se mantiene del Laboratorio 5, por si aún la usas para la actualización masiva por vehículo
     @Transactional
     public int actualizarEstadoPorVehiculo(Integer vehiculoId, String estado) {
         return envioRepository.actualizarEstadoPorVehiculo(vehiculoId, estado);
+    }
+
+    @Transactional
+    public void cancelarEnvio(Integer id) {
+        Envio envio = envioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Envío no encontrado"));
+
+        if ("EN_TRANSITO".equals(envio.getEstadoEnvio())) {
+            throw new InvalidStateTransitionException(
+                    "No se puede cancelar el envío " + envio.getCodigoRastreo() + " porque ya está en tránsito");
+        }
+
+        envio.setEstadoEnvio("CANCELADO");
+    }
+
+    public double calcularTarifa(double pesoKg, double distanciaKm) {
+        return TARIFA_BASE + (pesoKg * COSTO_POR_KG) + (distanciaKm * COSTO_POR_KM);
     }
 }
