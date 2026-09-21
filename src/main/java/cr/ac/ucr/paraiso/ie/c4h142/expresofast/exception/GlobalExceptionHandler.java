@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> manejarValidacion(MethodArgumentNotValidException ex) {
         Map<String, String> errores = new HashMap<>();
         ex.getBindingResult().getFieldErrors()
-          .forEach(err -> errores.put(err.getField(), err.getDefaultMessage()));
+                .forEach(err -> errores.put(err.getField(), err.getDefaultMessage()));
 
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
@@ -52,6 +52,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> manejarGenerico(Exception ex) {
         return construirRespuesta(HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error inesperado en el servidor");
+    }
+
+    @ExceptionHandler(CapacidadExcedidaException.class)
+    public ResponseEntity<?> manejarCapacidadExcedida(CapacidadExcedidaException ex) {
+        return construirRespuesta(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<?> manejarDuplicado(DuplicateResourceException ex) {
+        return construirRespuesta(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     private ResponseEntity<?> construirRespuesta(HttpStatus status, String mensaje) {
