@@ -63,3 +63,9 @@ Con el backend encendido, sirva la carpeta `frontend` desde un servidor local. P
 - `PATCH /api/envios/{id}/estado` - admin o conductor.
 - `GET /api/envios/{id}/bitacora` - admin u operador.
 - `/api/vehiculos/**` - admin
+
+## Pruebas y cobertura
+Ejecutar pruebas: `mvn clean test`
+Ejecutar suite completa con verificación de cobertura: `mvn clean verify`
+Ver reporte de cobertura: abrir `/target/site/jacoco/index.html` en el navegador.
+Umbral mínimo exigido: 85% de instrucciones cubiertas en el paquete `business`.
