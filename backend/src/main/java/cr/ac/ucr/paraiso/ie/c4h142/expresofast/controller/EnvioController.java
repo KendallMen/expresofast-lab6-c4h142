@@ -32,13 +32,11 @@ public class EnvioController {
         this.envioService = envioService;
     }
 
-    // ADMIN, OPERADOR, CONDUCTOR (regla en SecurityConfig)
     @GetMapping("/optimizados")
     public ResponseEntity<List<EnvioResponseDTO>> obtenerOptimizados() {
         return ResponseEntity.ok(envioService.obtenerEnviosOptimizados());
     }
 
-    // ADMIN, OPERADOR (regla en SecurityConfig)
     @PostMapping
     public ResponseEntity<EnvioResponseDTO> registrar(@Valid @RequestBody EnvioRequestDTO dto) {
         Envio guardado = envioService.registrarEnvio(dto);
@@ -46,7 +44,6 @@ public class EnvioController {
                 .body(envioService.obtenerRespuesta(guardado.getId()));
     }
 
-    // ADMIN, CONDUCTOR (regla en SecurityConfig)
     @PatchMapping("/{id}/estado")
     public ResponseEntity<EnvioResponseDTO> actualizarEstado(@PathVariable Integer id,
                                                               @Valid @RequestBody CambioEstadoDTO cambioDTO) {
@@ -54,7 +51,6 @@ public class EnvioController {
         return ResponseEntity.ok(envioService.obtenerRespuesta(id));
     }
 
-    // ADMIN, OPERADOR (regla en SecurityConfig)
     @GetMapping("/{id}/bitacora")
     public ResponseEntity<List<BitacoraResponseDTO>> obtenerBitacora(@PathVariable Integer id) {
         return ResponseEntity.ok(envioService.obtenerBitacora(id));
